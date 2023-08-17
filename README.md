@@ -160,3 +160,43 @@ EXPLAIN ANALYZE
 
 ## Hot cache behavior
 * if a query is executed 2nd time, 3nd time, the performance is staying constant because the cache.
+
+# Clustering index and chosing primary key
+* An optimal primary key with respect to the clustered index is as small (in bytes) as possible, keeps increasing monotonically, and groups the rows you query frequently and within short time of each other.
+
+# Indexing for Performance
+* Reduce the rows examined
+* Sort data
+* Validate data (no duplicate data)
+* Avoid reading rows (it's map 2nd index to primary key)
+* Find Min/Max values (first and last record)
+## When to remove indexes?
+* When it's unused and redundant.
+```
+select * from schema_unused_indexes\G
+select * from schema_redundant_indexes\G
+```
+## Improve index statistics
+* Update pages variables to improve statistics.
+```
+SHOW VARIABLE LIKE 'innodb_stats_persistent_sample_pages';
+SHOW VARIABLE LIKE 'innodb_stats_transient_sample_pages';
+```
+## Covering indexes
+* Design index for the whole query not just the WHERE. Covering indexes is indexes for all required columns in a query.
+```
+USE WORLD; 
+
+DESCRIBE city;
+
+EXPLAIN Analyze 
+        SELECT Name, District
+          FROM city
+         WHERE CountryCode = 'USA'\G
+         
+         
+ALTER TABLE city ADD INDEX Country_District_Name
+                  (CountryCode, District, Name);
+                  
+ALTER TABLE city ALTER INDEX CountryCode INVISIBLE;
+```
