@@ -194,9 +194,14 @@ EXPLAIN Analyze
           FROM city
          WHERE CountryCode = 'USA'\G
          
-         
 ALTER TABLE city ADD INDEX Country_District_Name
                   (CountryCode, District, Name);
                   
 ALTER TABLE city ALTER INDEX CountryCode INVISIBLE;
 ```
+# Transaction and Lock
+* Reducing lock
+  * Using indexes
+  * Split large transaction
+  * Select right isolation level (REPEATABLE READ, READ COMMITTED, READ UNCOMMITTED, SERIALIZABLE)
+* Monitor lock: information_schema.INNODB_TRX, performance_schema.data_lock_waits
